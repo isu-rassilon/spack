@@ -1,3 +1,8 @@
+.. Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+   Spack Project Developers. See the top-level COPYRIGHT file for details.
+
+   SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 .. _getting_started:
 
 ===============
@@ -11,10 +16,11 @@ Prerequisites
 Spack has the following minimum requirements, which must be installed
 before Spack is run:
 
-1. Python 2 (2.6 or 2.7) or 3 (3.4 - 3.7)
-2. A C/C++ compiler
-3. The ``git`` and ``curl`` commands.
-4. If using the ``gpg`` subcommand, ``gnupg2`` is required.
+#. Python 2 (2.6 or 2.7) or 3 (3.4 - 3.7) to run Spack
+#. A C/C++ compiler for building
+#. The ``make`` executable for building
+#. The ``git`` and ``curl`` commands for fetching
+#. If using the ``gpg`` subcommand, ``gnupg2`` is required
 
 These requirements can be easily installed on most modern Linux systems;
 on Macintosh, XCode is required.  Spack is designed to run on HPC
@@ -202,6 +208,13 @@ installed, but you know that new compilers have been added to your
 This loads the environment module for gcc-4.9.0 to add it to
 ``PATH``, and then it adds the compiler to Spack.
 
+.. note::
+
+   By default, spack does not fill in the ``modules:`` field in the
+   ``compilers.yaml`` file.  If you are using a compiler from a
+   module, then you should add this field manually.
+   See the section on :ref:`compilers-requiring-modules`.
+
 .. _cmd-spack-compiler-info:
 
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -320,6 +333,7 @@ by adding the following to your ``packages.yaml`` file:
      all:
        compiler: [gcc@4.9.3]
 
+.. _compilers-requiring-modules:
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Compilers Requiring Modules
@@ -1266,3 +1280,17 @@ for each compiler type for each cray modules. This ensures that for each
 compiler on our system we can use that external module.
 
 For more on external packages check out the section :ref:`sec-external-packages`.
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Using Linux containers on Cray machines
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Spack uses environment variables particular to the Cray programming
+environment to determine which systems are Cray platforms. These
+environment variables may be propagated into containers that are not
+using the Cray programming environment.
+
+To ensure that Spack does not autodetect the Cray programming
+environment, unset the environment variable ``CRAYPE_VERSION``. This
+will cause Spack to treat a linux container on a Cray system as a base
+linux distro.

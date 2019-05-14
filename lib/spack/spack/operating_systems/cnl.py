@@ -1,34 +1,15 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
+# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 import re
 
 import llnl.util.tty as tty
 import llnl.util.multiproc as mp
 
 from spack.architecture import OperatingSystem
-from spack.util.module_cmd import get_module_cmd
+from spack.util.module_cmd import module
 
 
 class Cnl(OperatingSystem):
@@ -48,8 +29,7 @@ class Cnl(OperatingSystem):
         return self.name + str(self.version)
 
     def _detect_crayos_version(self):
-        modulecmd = get_module_cmd()
-        output = modulecmd("avail", "PrgEnv-", output=str, error=str)
+        output = module("avail", "PrgEnv-")
         matches = re.findall(r'PrgEnv-\w+/(\d+).\d+.\d+', output)
         major_versions = set(matches)
         latest_version = max(major_versions)
@@ -77,10 +57,7 @@ class Cnl(OperatingSystem):
             if not cmp_cls.PrgEnv_compiler:
                 tty.die('Must supply PrgEnv_compiler with PrgEnv')
 
-            modulecmd = get_module_cmd()
-
-            output = modulecmd(
-                'avail', cmp_cls.PrgEnv_compiler, output=str, error=str)
+            output = module('avail', cmp_cls.PrgEnv_compiler)
             version_regex = r'(%s)/([\d\.]+[\d])' % cmp_cls.PrgEnv_compiler
             matches = re.findall(version_regex, output)
             for name, version in matches:
